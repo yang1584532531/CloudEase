@@ -172,6 +172,13 @@
                 <version>${cloudease.version}</version>
             </dependency>
 
+            <!-- 基础模块 -->
+            <dependency>
+                <groupId>com.cloudease</groupId>
+                <artifactId>cloudease-basis</artifactId>
+                <version>3.8.7</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -182,6 +189,7 @@
         <module>cloudease-quartz</module>
         <module>cloudease-generator</module>
         <module>cloudease-common</module>
+        <module>cloudease-basis</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -20,6 +20,7 @@ const tagsViewStore = useTagsViewStore()
 
 <style lang="scss" scoped>
 .app-main {
+  background: #f5f6f9;
   /* 50= navbar  50  */
   min-height: calc(100vh - 50px);
   width: 100%;

@@ -61,6 +61,12 @@
             <artifactId>cloudease-generator</artifactId>
         </dependency>
 
+        <!-- 基础模块 -->
+        <dependency>
+            <groupId>com.cloudease</groupId>
+            <artifactId>cloudease-basis</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
