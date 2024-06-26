@@ -101,4 +101,5 @@ public class CommunityOrgInfoController extends BaseController
     {
         return toAjax(communityOrgInfoService.deleteCommunityOrgInfoBycommunityOrgIds(communityOrgIds));
     }
+
 }

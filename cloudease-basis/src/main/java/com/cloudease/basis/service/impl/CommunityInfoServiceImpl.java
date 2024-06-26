@@ -55,7 +55,6 @@ public class CommunityInfoServiceImpl implements ICommunityInfoService
     public int insertCommunityInfo(CommunityInfo communityInfo)
     {
         communityInfo.setCreateTime(DateUtils.getNowDate());
-        communityInfo.setCommunityCode(IdWorker.getNextCode());
         return communityInfoMapper.insertCommunityInfo(communityInfo);
     }
 
@@ -94,5 +93,17 @@ public class CommunityInfoServiceImpl implements ICommunityInfoService
     public int deleteCommunityInfoById(Long id)
     {
         return communityInfoMapper.deleteCommunityInfoById(id);
+    }
+
+    /**
+     * 根据组织Id查询小区详细信息
+     *
+     * @param communityOrgCode 小区组织Id
+     * @return 小区信息
+     */
+    @Override
+    public CommunityInfo selectCommunityInfoByCommunityOrgCode(Long communityOrgCode)
+    {
+        return communityInfoMapper.selectCommunityInfoByCommunityOrgCode(communityOrgCode);
     }
 }

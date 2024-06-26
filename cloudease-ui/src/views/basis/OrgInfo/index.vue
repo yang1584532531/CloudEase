@@ -110,6 +110,7 @@
          </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
+          <el-button v-if="scope.row.communityOrgParentId == 0" link type="primary" icon="Document" @click="getCommunityInfo(scope.row)" v-hasPermi="['basis:OrgInfo:getCommunityInfo']">查看详情</el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['basis:OrgInfo:edit']">修改</el-button>
           <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasPermi="['basis:OrgInfo:add']">新增</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['basis:OrgInfo:remove']">删除</el-button>
@@ -178,19 +179,74 @@
         </div>
       </template>
     </el-dialog>
+
+
+    <!-- 添加或修改小区详细信息对话框 -->
+    <el-dialog :title="title" v-model="openInfo" width="1500px" append-to-body>
+      <el-form ref="CommunityInfoRef" :model="communityForm" :rules="rules" label-width="100px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="小区名称" prop="communityName" >
+          <el-input :readonly="inputDisable" v-model="communityForm.communityName" placeholder="请输入小区名称" />
+            </el-form-item>
+            <!-- <el-form-item label="小区经纬度" prop="communityCoordinate">
+              <el-input v-model="form.communityCoordinate" placeholder="请输入小区经纬度" />
+            </el-form-item> -->
+            <!-- <el-form-item label="小区地址" prop="communityAddress">
+              <el-input v-model="form.communityAddress" placeholder="请输入小区地址" />
+            </el-form-item> -->
+            <el-form-item label="小区联系人" prop="communityContacts">
+              <el-input v-model="communityForm.communityContacts" placeholder="请输入小区联系人" />
+            </el-form-item>
+            <el-form-item label="小区联系方式" prop="communityPhone">
+              <el-input v-model="communityForm.communityPhone" placeholder="请输入小区联系方式" />
+            </el-form-item>
+            <el-form-item label="状态" prop="communityStatus">
+              <el-radio-group v-model="communityForm.communityStatus">
+                <el-radio
+                  v-for="dict in cloudease_community_type"
+                  :key="dict.value"
+                  :label="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="communityForm.remark" type="textarea" placeholder="请输入内容" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="小区经纬度" prop="communityCoordinate">
+              <el-input v-model="form.communityCoordinate" placeholder="请输入小区经纬度" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button v-if="!btnShow" type="primary" @click="updateBtn">修 改</el-button>
+          <el-button v-if="btnShow" type="primary" @click="submitCommunityForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="OrgInfo">
 import { listOrgInfo, getOrgInfo, delOrgInfo, addOrgInfo, updateOrgInfo } from "@/api/basis/OrgInfo";
+import { getInfoCommunityOrgCode, addCommunityInfo, updateCommunityInfo } from "@/api/basis/communityInfo"
 
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable } = proxy.useDict("sys_normal_disable");
+const { sys_normal_disable, cloudease_community_type } = proxy.useDict("sys_normal_disable", "cloudease_community_type");
 
 const OrgInfoList = ref([]);
 const open = ref(false);
+const openInfo = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
+const btnShow = ref(false);
+const inputDisable = ref(true);
 const ids = ref([]);
 const oriOptions = ref([]);
 const single = ref(true);
@@ -202,6 +258,7 @@ const isExpandAll = ref(true);
 
 const data = reactive({
   form: {},
+  communityForm:{},
   queryParams: {
     communityOrgParentId: null,
     communityAncestors: null,
@@ -213,7 +270,7 @@ const data = reactive({
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const { queryParams, form, rules,communityForm } = toRefs(data);
 
 /** 查询小区组织结构列表 */
 function getList() {
@@ -227,6 +284,7 @@ function getList() {
 // 取消按钮
 function cancel() {
   open.value = false;
+  openInfo.value = false;
   reset();
 }
 
@@ -245,7 +303,7 @@ function reset() {
     updateBy: null,
     updateTime: null
   };
-  proxy.resetForm("OrgInfoRef");
+  proxy.resetForm("OrgInfoRef","CommunityInfoRef");
 }
 
 /** 搜索按钮操作 */
@@ -303,7 +361,54 @@ function handleUpdate(row) {
   });
 }
 
+//查看详情按钮功能
+function getCommunityInfo(row){
+  
+  const _communityOrgCode = row.communityOrgId
+  getInfoCommunityOrgCode(_communityOrgCode).then(response => {
+    communityForm.value = response.data;
+    openInfo.value = true;
+    title.value = "小区详细信息";
+  }).catch(() => {
+    btnShow.value = true;
+    openInfo.value = true;
+    title.value = "新建小区详细信息";
+    inputDisable.value = false
+    communityForm.value.communityOrgCode = row.communityOrgId
+    console.log(communityForm.value)
+  });;
+  
+  
+}
+
+//修改按钮功能
+function updateBtn(row){
+  inputDisable.value = false
+  proxy.$modal.msgSuccess("开始修改");
+}
+
 /** 提交按钮 */
+function submitCommunityForm() {
+  proxy.$refs["CommunityInfoRef"].validate(valid => {
+    if (valid) {
+      if (communityForm.value.id != null) {
+        updateCommunityInfo(communityForm.value).then(response => {
+          proxy.$modal.msgSuccess("修改成功");
+          openInfo.value = false;
+          getList();
+        });
+      } else {
+        addCommunityInfo(communityForm.value).then(response => {
+          proxy.$modal.msgSuccess("新增成功");
+          openInfo.value = false;
+          getList();
+        });
+      }
+    }
+  });
+}
+
+/** 小区信息提交按钮 */
 function submitForm() {
   proxy.$refs["OrgInfoRef"].validate(valid => {
     if (valid) {

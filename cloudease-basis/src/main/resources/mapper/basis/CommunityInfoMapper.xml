@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="CommunityInfo" id="CommunityInfoResult">
         <result property="id"    column="id"    />
-        <result property="communityCode"    column="community_code"    />
+        <result property="communityOrgCode"    column="community_org_code"    />
         <result property="communityName"    column="community_name"    />
         <result property="communityCoordinate"    column="community_coordinate"    />
         <result property="communityAddress"    column="community_address"    />
@@ -21,13 +21,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectCommunityInfoVo">
-        select id, community_code, community_name, community_coordinate, community_address, community_contacts, community_phone, community_status, create_by, create_time, update_by, update_time, remark from community_info
+        select id, community_org_code, community_name, community_coordinate, community_address, community_contacts, community_phone, community_status, create_by, create_time, update_by, update_time, remark from community_info
     </sql>
 
     <select id="selectCommunityInfoList" parameterType="CommunityInfo" resultMap="CommunityInfoResult">
         <include refid="selectCommunityInfoVo"/>
         <where>  
-            <if test="communityCode != null  and communityCode != ''"> and community_code = #{communityCode}</if>
+            <if test="communityOrgCode != null  and communityOrgCode != ''"> and community_org_code = #{communityOrgCode}</if>
             <if test="communityName != null  and communityName != ''"> and community_name like concat('%', #{communityName}, '%')</if>
             <if test="communityCoordinate != null  and communityCoordinate != ''"> and community_coordinate = #{communityCoordinate}</if>
             <if test="communityAddress != null  and communityAddress != ''"> and community_address = #{communityAddress}</if>
@@ -41,12 +41,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCommunityInfoVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectCommunityInfoByCommunityOrgCode" parameterType="Long" resultMap="CommunityInfoResult">
+        <include refid="selectCommunityInfoVo"/>
+        where community_org_code = #{communityOrgCode}
+    </select>
         
     <insert id="insertCommunityInfo" parameterType="CommunityInfo">
         insert into community_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
-            <if test="communityCode != null">community_code,</if>
+            <if test="communityOrgCode != null">community_org_code,</if>
             <if test="communityName != null">community_name,</if>
             <if test="communityCoordinate != null">community_coordinate,</if>
             <if test="communityAddress != null">community_address,</if>
@@ -61,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
-            <if test="communityCode != null">#{communityCode},</if>
+            <if test="communityOrgCode != null">#{communityOrgCode},</if>
             <if test="communityName != null">#{communityName},</if>
             <if test="communityCoordinate != null">#{communityCoordinate},</if>
             <if test="communityAddress != null">#{communityAddress},</if>
@@ -79,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateCommunityInfo" parameterType="CommunityInfo">
         update community_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test="communityCode != null">community_code = #{communityCode},</if>
+            <if test="communityOrgCode != null">community_org_code = #{communityOrgCode},</if>
             <if test="communityName != null">community_name = #{communityName},</if>
             <if test="communityCoordinate != null">community_coordinate = #{communityCoordinate},</if>
             <if test="communityAddress != null">community_address = #{communityAddress},</if>

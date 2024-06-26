@@ -19,8 +19,8 @@ public class CommunityInfo extends BaseEntity
     private Long id;
 
     /** 小区编码 */
-    @Excel(name = "小区编码")
-    private String communityCode;
+    @Excel(name = "小区组织id")
+    private Long communityOrgCode;
 
     /** 小区名称 */
     @Excel(name = "小区名称")
@@ -55,15 +55,16 @@ public class CommunityInfo extends BaseEntity
     {
         return id;
     }
-    public void setCommunityCode(String communityCode) 
-    {
-        this.communityCode = communityCode;
+
+
+    public Long getCommunityOrgCode() {
+        return communityOrgCode;
     }
 
-    public String getCommunityCode() 
-    {
-        return communityCode;
+    public void setCommunityOrgCode(Long communityOrgCode) {
+        this.communityOrgCode = communityOrgCode;
     }
+
     public void setCommunityName(String communityName) 
     {
         this.communityName = communityName;
@@ -123,7 +124,7 @@ public class CommunityInfo extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("communityCode", getCommunityCode())
+            .append("communityOrgCode", getCommunityOrgCode())
             .append("communityName", getCommunityName())
             .append("communityCoordinate", getCommunityCoordinate())
             .append("communityAddress", getCommunityAddress())

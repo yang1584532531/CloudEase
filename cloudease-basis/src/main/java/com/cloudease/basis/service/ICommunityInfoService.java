@@ -58,4 +58,12 @@ public interface ICommunityInfoService
      * @return 结果
      */
     public int deleteCommunityInfoById(Long id);
+
+    /**
+     * 查询小区信息
+     *
+     * @param communityOrgCode 小区组织Id
+     * @return 小区信息
+     */
+    public CommunityInfo selectCommunityInfoByCommunityOrgCode(Long communityOrgCode);
 }

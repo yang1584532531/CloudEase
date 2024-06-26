@@ -42,3 +42,11 @@ export function delCommunityInfo(id) {
     method: 'delete'
   })
 }
+
+// 根据小区组织id查询详细信息
+export function getInfoCommunityOrgCode(communityOrgCode) {
+  return request({
+    url: '/basis/communityInfo/getInfoCommunityOrgCode/' + communityOrgCode,
+    method: 'get'
+  })
+}

@@ -102,4 +102,20 @@ public class CommunityInfoController extends BaseController
     {
         return toAjax(communityInfoService.deleteCommunityInfoByIds(ids));
     }
+
+    /**
+     * 根据小区组织Id获取小区信息详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('basis:communityInfo:communityOrgCode')")
+    @GetMapping(value = "/getInfoCommunityOrgCode/{communityOrgCode}")
+    public AjaxResult getInfoCommunityOrgCode(@PathVariable("communityOrgCode") Long communityOrgCode)
+    {
+        CommunityInfo info = communityInfoService.selectCommunityInfoByCommunityOrgCode(communityOrgCode);
+        if (info == null){
+            return AjaxResult.error("未查询到该小区的详细信息，请直接新建",new CommunityInfo());
+        } else {
+            return AjaxResult.success(info);
+        }
+
+    }
 }
